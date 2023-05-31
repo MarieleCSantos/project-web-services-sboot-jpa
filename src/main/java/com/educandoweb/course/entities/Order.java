@@ -8,6 +8,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -17,6 +18,8 @@ import lombok.Setter;
 
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.HashSet;
+import java.util.Set;
 
 @NoArgsConstructor
 @Getter
@@ -35,6 +38,13 @@ public class Order implements Serializable {
 
     private Integer orderStatus;
 
+    @ManyToOne
+    @JoinColumn(name = "client_id")
+    private User client;
+
+    @OneToMany(mappedBy = "id.order")
+    private Set<OrderItem> items = new HashSet<>();
+
     public Order(Long id, Instant moment, OrderStatus orderStatus, User client) {
         this.id = id;
         this.moment = moment;
@@ -50,7 +60,7 @@ public class Order implements Serializable {
         if (orderStatus != null) this.orderStatus = orderStatus.getCode();
     }
 
-    @ManyToOne
-    @JoinColumn(name = "client_id")
-    private User client;
+    public Set<OrderItem> getItems() {
+        return items;
+    }
 }
